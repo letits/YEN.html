@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Ma Valentine 💖</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* CONTENEUR */
+.box {
+  background: white;
+  padding: 25px;
+  border-radius: 20px;
+  width: 360px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* PAGES */
+.page { display: none; }
+.page.active { display: block; }
+
+/* IMAGE */
+img {
+  width: 100%;
+  border-radius: 15px;
+  margin-bottom: 15px;
+}
+.animate {
+  animation: fadeZoom 0.6s ease;
+}
+
+/* BARRE DE PROGRESSION */
+.bar-container {
+  background: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  display: none;
+}
+.bar {
+  height: 20px;
+  width: 0%;
+  background: linear-gradient(90deg, #ff4d6d, #ff85a1);
+  transition: width 0.4s;
+}
+
+/* BOUTONS */
+button {
+  padding: 12px 25px;
+  font-size: 18px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  margin: 8px;
+}
+#yes { background: #ff4d6d; color: white; }
+#no { background: #ddd; }
+
+/* MESSAGE */
+#message {
+  min-height: 40px;
+  font-size: 18px;
+  margin-top: 10px;
+}
+
+/* PHOTOS FINALES */
+.final-photos img {
+  margin-top: 10px;
+  animation: fadeZoom 0.8s ease;
+}
+
+/* ANIMATIONS */
+@keyframes fadeZoom {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+
+<!-- PAGE ACCUEIL -->
+<div class="page active" id="start">
+  <h1>Réponds à ce formulaire 💌</h1>
+  <img src="start.jpg" alt="Début">
+  <button onclick="start()">Commencer</button>
+</div>
+
+<!-- PAGE QUESTIONS -->
+<div class="page" id="main">
+  <h1>Veux-tu être ma Valentine ? 💘</h1>
+  <img id="photo" src="oui1.jpg" alt="photo">
+  
+  <button id="yes">Oui 🥰</button>
+  <button id="no">Non 🙃</button>
+
+  <div class="bar-container">
+    <div class="bar"></div>
+  </div>
+
+  <div id="message"></div>
+</div>
+
+<!-- PAGE FINALE -->
+<div class="page" id="final">
+  <h1>Merciii d'avoir dit oui 💖</h1>
+  <p>Je suis un petit chanceux</p>
+<img src="final.jpg" >
+</div>
+
+</div>
+
+<script>
+// COMPTEURS
+let yesIndex = 0;
+let noIndex = 0;
+let progress = 0;
+
+// PHOTOS ET MESSAGES OUI
+const yesPhotos = ["oui1.jpg","oui2.jpg","oui3.jpg","oui4.jpg"];
+const yesMessages = [
+  "Juste ouai?",
+  "💖",
+  "💖💖",
+  "💖💖💖"
+];
+
+// PHOTOS ET MESSAGES NON
+const noPhotos = ["non1.jpg","non2.jpg","non3.jpg"];
+const noMessages = [
+  "Et j'ai dit non",
+  "Pas cool",
+  "Bonne continuation",
+
+];
+
+// FONCTION POUR COMMENCER
+function start() {
+  document.getElementById("start").classList.remove("active");
+  document.getElementById("main").classList.add("active");
+}
+
+// FONCTION DE CLIC POUR OUI / NON
+function click(isYes) {
+  const photo = document.getElementById("photo");
+  const msg = document.getElementById("message");
+
+  // reset animation
+  photo.classList.remove("animate");
+  msg.classList.remove("animate");
+  void photo.offsetWidth; // force refresh
+  void msg.offsetWidth;
+
+  if (isYes) {
+    if (yesIndex < yesPhotos.length) {
+      photo.src = yesPhotos[yesIndex];
+      msg.textContent = yesMessages[yesIndex];
+
+      // jauge
+      progress += 100 / yesPhotos.length;
+      document.querySelector(".bar-container").style.display = "block";
+      document.querySelector(".bar").style.width = progress + "%";
+
+      yesIndex++;
+    }
+  } else {
+    if (noIndex < noPhotos.length) {
+      photo.src = noPhotos[noIndex];
+      msg.textContent = noMessages[noIndex];
+      noIndex++;
+    }
+  }
+
+  // relance animation
+  photo.classList.add("animate");
+  msg.classList.add("animate");
+
+
+  
+// FIN
+  if (progress >= 100) end();
+}
+
+// LIER LES BOUTONS À LA FONCTION
+document.getElementById("yes").onclick = () => click(true);
+document.getElementById("no").onclick = () => click(false);
+
+// FONCTION FIN
+function end() {
+  document.getElementById("main").classList.remove("active");
+  document.getElementById("final").classList.add("active");
+
+  const container = document.querySelector(".final-photos");
+  yesPhotos.forEach(p => {
+    const img = document.createElement("img");
+    img.src = p;
+    container.appendChild(img);
+  });
+}
+</script>
+
+</body>
+</html>
